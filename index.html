@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibek Gurung — Full Stack Developer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #0a0a0f;
+            --paper: #f5f2eb;
+            --cream: #faf8f3;
+            --gold: #c8973a;
+            --gold-light: #e8b85a;
+            --rust: #c24b2a;
+            --teal: #1a6b6b;
+            --teal-light: #2a8c8c;
+            --muted: #7a7670;
+            --border: rgba(10,10,15,0.12);
+        }
+ 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+ 
+        html { scroll-behavior: smooth; }
+ 
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+            overflow-x: hidden;
+            cursor: none;
+        }
+ 
+        /* Custom cursor */
+        .cursor {
+            width: 10px; height: 10px;
+            background: var(--gold);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease, width 0.2s, height 0.2s, background 0.2s;
+        }
+        .cursor-ring {
+            width: 36px; height: 36px;
+            border: 1.5px solid var(--gold);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: transform 0.15s ease, width 0.3s, height 0.3s, border-color 0.2s;
+            opacity: 0.7;
+        }
+        body:hover .cursor { opacity: 1; }
+ 
+        /* Scroll progress */
+        .progress-bar {
+            position: fixed; top: 0; left: 0;
+            height: 2px;
+            background: var(--gold);
+            z-index: 9000;
+            width: 0%;
+            transition: width 0.05s linear;
+        }
+ 
+        /* ─────────────────────────────────────────
+           NAV
+        ───────────────────────────────────────── */
+        nav {
+            position: fixed; top: 0; width: 100%;
+            z-index: 800;
+            padding: 1.4rem 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.4s ease, box-shadow 0.4s;
+        }
+        nav.scrolled {
+            background: rgba(245,242,235,0.96);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 1px 0 var(--border);
+        }
+        .nav-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            color: var(--ink);
+            text-decoration: none;
+        }
+        .nav-logo span { color: var(--gold); }
+        .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+        .nav-links a {
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            text-decoration: none;
+            transition: color 0.25s;
+        }
+        .nav-links a:hover { color: var(--ink); }
+ 
+        /* ─────────────────────────────────────────
+           HERO
+        ───────────────────────────────────────── */
+        .hero {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-left {
+            background: var(--ink);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 8rem 5rem 5rem;
+            position: relative;
+        }
+        .hero-left::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 20% 80%, rgba(200,151,58,0.18) 0%, transparent 60%);
+        }
+        .hero-eyebrow {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.2em;
+            color: var(--gold);
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: riseUp 0.8s 0.4s ease forwards;
+        }
+        .hero-name {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 5vw, 5.5rem);
+            font-weight: 900;
+            line-height: 1.0;
+            color: white;
+            margin-bottom: 1rem;
+            opacity: 0;
+            animation: riseUp 0.8s 0.6s ease forwards;
+        }
+        .hero-name em {
+            font-style: italic;
+            color: var(--gold-light);
+        }
+        .hero-tagline {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.5);
+            font-weight: 300;
+            line-height: 1.7;
+            max-width: 380px;
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: riseUp 0.8s 0.8s ease forwards;
+        }
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: var(--gold);
+            color: var(--ink);
+            font-weight: 600;
+            font-size: 0.82rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 2px;
+            width: fit-content;
+            opacity: 0;
+            animation: riseUp 0.8s 1s ease forwards;
+            transition: background 0.25s, transform 0.25s;
+        }
+        .hero-cta:hover {
+            background: var(--gold-light);
+            transform: translateY(-2px);
+        }
+        .hero-right {
+            background: var(--cream);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 8rem 4rem 5rem;
+            position: relative;
+        }
+        .hero-right::before {
+            content: '{ }';
+            font-family: 'DM Mono', monospace;
+            font-size: 18rem;
+            font-weight: 300;
+            color: rgba(10,10,15,0.04);
+            position: absolute;
+            right: -2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            line-height: 1;
+        }
+        .hero-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+            opacity: 0;
+            animation: riseUp 0.8s 1.1s ease forwards;
+        }
+        .stat-item {
+            border-left: 2px solid var(--gold);
+            padding-left: 1.5rem;
+        }
+        .stat-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--ink);
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 0.78rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-top: 0.3rem;
+        }
+        .hero-stack {
+            margin-top: 3rem;
+            opacity: 0;
+            animation: riseUp 0.8s 1.3s ease forwards;
+        }
+        .hero-stack h4 {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 1rem;
+        }
+        .stack-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .tag {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.72rem;
+            padding: 0.4rem 0.9rem;
+            border: 1px solid var(--border);
+            border-radius: 2px;
+            color: var(--muted);
+            background: white;
+            transition: all 0.2s;
+        }
+        .tag:hover { border-color: var(--gold); color: var(--ink); background: var(--paper); }
+ 
+        @keyframes riseUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+ 
+        /* ─────────────────────────────────────────
+           SECTION SHARED
+        ───────────────────────────────────────── */
+        section {
+            padding: 7rem 0;
+            position: relative;
+        }
+        .container { max-width: 1180px; margin: 0 auto; padding: 0 4rem; }
+        .section-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .section-label::before {
+            content: '';
+            display: inline-block;
+            width: 28px; height: 1px;
+            background: var(--gold);
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 3.5vw, 3rem);
+            font-weight: 700;
+            color: var(--ink);
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+        .section-subtitle {
+            font-size: 1rem;
+            color: var(--muted);
+            font-weight: 300;
+            line-height: 1.7;
+            max-width: 560px;
+            margin-bottom: 4rem;
+        }
+ 
+        /* reveal on scroll */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+ 
+        /* ─────────────────────────────────────────
+           FULLSTACK SECTION
+        ───────────────────────────────────────── */
+        #fullstack { background: var(--ink); color: white; }
+        #fullstack .section-title { color: white; }
+        #fullstack .section-subtitle { color: rgba(255,255,255,0.5); }
+ 
+        .arch-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .arch-cell {
+            background: var(--ink);
+            padding: 3rem 2.5rem;
+            transition: background 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .arch-cell::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: var(--gold);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            transform-origin: left;
+        }
+        .arch-cell:hover { background: #111118; }
+        .arch-cell:hover::before { transform: scaleX(1); }
+        .arch-num {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            color: var(--gold);
+            margin-bottom: 1.5rem;
+        }
+        .arch-icon { font-size: 1.8rem; margin-bottom: 1rem; }
+        .arch-cell h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.8rem;
+        }
+        .arch-cell p {
+            font-size: 0.88rem;
+            line-height: 1.75;
+            color: rgba(255,255,255,0.45);
+        }
+        .arch-cell ul {
+            list-style: none;
+            margin-top: 1.2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .arch-cell ul li {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.68rem;
+            padding: 0.25rem 0.6rem;
+            border: 1px solid rgba(200,151,58,0.3);
+            color: var(--gold);
+            border-radius: 2px;
+        }
+ 
+        .fullstack-insight {
+            margin-top: 4rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 2.5rem 3rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 2rem;
+        }
+        .insight-icon {
+            font-size: 2rem;
+            color: var(--gold);
+            flex-shrink: 0;
+            margin-top: 0.2rem;
+        }
+        .fullstack-insight h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+        .fullstack-insight p {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.45);
+            line-height: 1.75;
+        }
+ 
+        /* ─────────────────────────────────────────
+           HTML SECTION
+        ───────────────────────────────────────── */
+        #html { background: var(--cream); }
+ 
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+ 
+        .feature-list { list-style: none; margin: 1.5rem 0; }
+        .feature-list li {
+            padding: 0.9rem 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            font-size: 0.9rem;
+        }
+        .feature-list li:last-child { border-bottom: none; }
+        .fi-icon {
+            width: 28px; height: 28px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.7rem;
+            color: var(--ink);
+        }
+        .fi-text strong {
+            display: block;
+            font-weight: 500;
+            color: var(--ink);
+            margin-bottom: 0.15rem;
+        }
+        .fi-text span {
+            color: var(--muted);
+            font-size: 0.83rem;
+        }
+ 
+        .code-panel {
+            background: #111118;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        .code-header {
+            background: #1a1a24;
+            padding: 0.8rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .dot-r { background: #ff5f57; }
+        .dot-y { background: #febc2e; }
+        .dot-g { background: #28c840; }
+        .file-name {
+            margin-left: 0.5rem;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.35);
+            letter-spacing: 0.05em;
+        }
+        .code-body { padding: 1.5rem; overflow-x: auto; }
+        .code-body pre {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.78rem;
+            line-height: 1.8;
+            color: #abb2bf;
+            margin: 0;
+        }
+        .t-tag { color: #e06c75; }
+        .t-attr { color: #d19a66; }
+        .t-val { color: #98c379; }
+        .t-cmt { color: #5c6370; font-style: italic; }
+        .t-kw { color: #c678dd; }
+ 
+        .live-demo {
+            margin-top: 2rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .demo-bar {
+            background: #e8e4dc;
+            padding: 0.6rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.68rem;
+            color: var(--muted);
+            border-bottom: 1px solid var(--border);
+        }
+        .demo-bar i { font-size: 0.6rem; }
+        .demo-content { background: white; padding: 1.5rem; }
+        .demo-content header { padding-bottom: 0.8rem; border-bottom: 1px solid var(--border); margin-bottom: 1rem; }
+        .demo-content header small { color: var(--muted); font-size: 0.78rem; }
+        .demo-content h4 { font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .demo-content p { font-size: 0.85rem; color: var(--muted); }
+        .demo-btn {
+            display: inline-block;
+            margin-top: 0.8rem;
+            padding: 0.45rem 1rem;
+            background: var(--ink);
+            color: white;
+            font-size: 0.75rem;
+            border-radius: 2px;
+            cursor: default;
+        }
+ 
+        /* ─────────────────────────────────────────
+           CSS SECTION
+        ───────────────────────────────────────── */
+        #css { background: white; }
+ 
+        .css-concepts {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        .concept-card {
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 3px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .concept-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            height: 2px;
+            width: 0;
+            background: var(--teal);
+            transition: width 0.35s ease;
+        }
+        .concept-card:hover { box-shadow: 0 8px 30px rgba(0,0,0,0.07); }
+        .concept-card:hover::after { width: 100%; }
+        .concept-icon {
+            width: 40px; height: 40px;
+            background: #f0fafa;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--teal);
+            font-size: 0.9rem;
+            margin-bottom: 1.2rem;
+        }
+        .concept-card h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.4rem; }
+        .concept-card p { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
+ 
+        .css-playground {
+            background: var(--cream);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+        .css-playground h4 {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 2rem;
+        }
+        .shape-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .shape {
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: none;
+        }
+        .shape:hover { transform: scale(1.25) rotate(8deg); }
+        .s1 { width: 60px; height: 60px; background: var(--gold); border-radius: 4px; }
+        .s2 { width: 60px; height: 60px; background: var(--teal); border-radius: 50%; }
+        .s3 { width: 60px; height: 60px; background: var(--rust); clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+        .s4 { width: 60px; height: 60px; background: var(--ink); transform: rotate(45deg); }
+        .s4:hover { transform: rotate(45deg) scale(1.25); }
+ 
+        .animate-ball {
+            width: 20px; height: 20px;
+            background: var(--gold);
+            border-radius: 50%;
+            margin: 2rem auto 0;
+            animation: orbit 3s linear infinite;
+        }
+        @keyframes orbit {
+            0%   { transform: translateX(0); }
+            25%  { transform: translateX(60px) translateY(-20px); }
+            50%  { transform: translateX(120px); }
+            75%  { transform: translateX(60px) translateY(20px); }
+            100% { transform: translateX(0); }
+        }
+ 
+        /* ─────────────────────────────────────────
+           BOOTSTRAP SECTION
+        ───────────────────────────────────────── */
+        #bootstrap { background: var(--paper); }
+ 
+        .bs-features {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            margin-bottom: 3rem;
+        }
+        .bs-feat {
+            background: var(--paper);
+            padding: 2rem 1.5rem;
+            transition: background 0.25s;
+        }
+        .bs-feat:hover { background: white; }
+        .bs-feat-num {
+            font-family: 'DM Mono', monospace;
+            font-size: 1.8rem;
+            font-weight: 300;
+            color: var(--gold);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        .bs-feat h4 { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.35rem; }
+        .bs-feat p { font-size: 0.8rem; color: var(--muted); }
+ 
+        .bs-demo-panel {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .bs-demo-top {
+            background: var(--ink);
+            padding: 0.7rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .bs-demo-top span {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.68rem;
+            color: rgba(255,255,255,0.4);
+        }
+        .bs-demo-body { padding: 2rem; }
+        .bs-row { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-bottom: 1.5rem; }
+        .bs-btn {
+            padding: 0.5rem 1.2rem;
+            border-radius: 2px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: none;
+            cursor: none;
+            transition: all 0.2s;
+        }
+        .bs-btn-primary { background: var(--ink); color: white; }
+        .bs-btn-primary:hover { background: #1a1a2e; transform: translateY(-1px); }
+        .bs-btn-gold { background: var(--gold); color: var(--ink); }
+        .bs-btn-teal { background: var(--teal); color: white; }
+        .bs-btn-outline { background: transparent; color: var(--ink); border: 1px solid var(--border); }
+        .bs-btn-outline:hover { background: var(--paper); }
+        .bs-progress {
+            height: 6px;
+            background: #eee;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        .bs-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--rust));
+            width: 0%;
+            animation: fillBar 2s 1s ease forwards;
+            border-radius: 3px;
+        }
+        @keyframes fillBar { to { width: 78%; } }
+        .bs-grid-demo { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem; }
+        .bs-grid-cell {
+            background: var(--cream);
+            border: 1px dashed var(--border);
+            padding: 1rem;
+            font-size: 0.78rem;
+            color: var(--muted);
+            text-align: center;
+            font-family: 'DM Mono', monospace;
+        }
+        .bs-alert {
+            padding: 0.8rem 1.2rem;
+            background: #f0fafa;
+            border-left: 3px solid var(--teal);
+            font-size: 0.83rem;
+            color: var(--teal);
+            margin-top: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+ 
+        /* ─────────────────────────────────────────
+           JAVASCRIPT SECTION
+        ───────────────────────────────────────── */
+        #javascript { background: var(--ink); color: white; }
+        #javascript .section-title { color: white; }
+        #javascript .section-subtitle { color: rgba(255,255,255,0.45); }
+ 
+        .js-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+ 
+        .js-concepts { margin-bottom: 3rem; }
+        .jc-item {
+            display: flex;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .jc-item:last-child { border-bottom: none; }
+        .jc-num {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--gold);
+            letter-spacing: 0.1em;
+            flex-shrink: 0;
+            padding-top: 0.1rem;
+        }
+        .jc-item h5 { font-size: 0.88rem; font-weight: 500; color: white; margin-bottom: 0.2rem; }
+        .jc-item p { font-size: 0.8rem; color: rgba(255,255,255,0.4); line-height: 1.65; }
+ 
+        .js-interactive {
+            background: #111118;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .js-int-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            font-family: 'DM Mono', monospace;
+            font-size: 0.68rem;
+            letter-spacing: 0.15em;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .live-badge {
+            width: 8px; height: 8px;
+            background: #28c840;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.4rem;
+            animation: pulse-g 2s infinite;
+        }
+        @keyframes pulse-g {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .js-int-body { padding: 2rem; }
+ 
+        /* Counter */
+        .counter-widget { text-align: center; margin-bottom: 2rem; }
+        .counter-val {
+            font-family: 'Playfair Display', serif;
+            font-size: 4.5rem;
+            font-weight: 700;
+            color: var(--gold);
+            line-height: 1;
+            margin-bottom: 1rem;
+            transition: transform 0.15s ease;
+        }
+        .counter-btns { display: flex; justify-content: center; gap: 0.6rem; }
+        .c-btn {
+            padding: 0.5rem 1.2rem;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: transparent;
+            color: rgba(255,255,255,0.7);
+            border-radius: 2px;
+            cursor: none;
+            transition: all 0.2s;
+        }
+        .c-btn:hover { background: rgba(255,255,255,0.06); color: white; border-color: rgba(255,255,255,0.3); }
+        .c-btn.primary { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+        .c-btn.primary:hover { background: var(--gold-light); }
+ 
+        /* Color swatch */
+        .color-swatch {
+            margin-bottom: 2rem;
+        }
+        .color-swatch p {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.68rem;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.8rem;
+        }
+        #colorBox {
+            height: 80px;
+            border-radius: 3px;
+            background: var(--teal);
+            cursor: none;
+            transition: background 0.4s ease, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.7);
+            letter-spacing: 0.1em;
+        }
+        #colorBox:hover { transform: scale(1.02); }
+ 
+        /* Email */
+        .email-demo p {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.68rem;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.6rem;
+        }
+        .email-row { display: flex; gap: 0.5rem; }
+        #emailInput {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.12);
+            padding: 0.6rem 0.9rem;
+            color: white;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.78rem;
+            border-radius: 2px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        #emailInput:focus { border-color: var(--gold); }
+        #emailInput.valid { border-color: #28c840; }
+        #emailInput.invalid { border-color: var(--rust); }
+        #validateBtn {
+            padding: 0 1rem;
+            background: var(--gold);
+            border: none;
+            border-radius: 2px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: none;
+            color: var(--ink);
+            transition: background 0.2s;
+        }
+        #validateBtn:hover { background: var(--gold-light); }
+        #emailFeedback {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.7rem;
+            margin-top: 0.5rem;
+            min-height: 1.2rem;
+        }
+        .valid-msg { color: #28c840; }
+        .invalid-msg { color: var(--rust); }
+ 
+        /* ─────────────────────────────────────────
+           FOOTER
+        ───────────────────────────────────────── */
+        footer {
+            background: #060609;
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+        .footer-top {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 3rem;
+            padding-bottom: 3rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 2rem;
+        }
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.8rem;
+        }
+        .footer-logo span { color: var(--gold); }
+        footer p { font-size: 0.85rem; color: rgba(255,255,255,0.35); line-height: 1.75; }
+        .footer-heading {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.68rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 1.2rem;
+        }
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 0.6rem; }
+        .footer-links a {
+            color: rgba(255,255,255,0.4);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover { color: white; }
+        .tech-icons { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem; }
+        .t-icon {
+            width: 40px; height: 40px;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: rgba(255,255,255,0.5);
+            transition: all 0.25s;
+        }
+        .t-icon:hover { border-color: var(--gold); color: var(--gold); }
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.25);
+            font-family: 'DM Mono', monospace;
+            letter-spacing: 0.05em;
+        }
+ 
+        /* ─────────────────────────────────────────
+           RESPONSIVE
+        ───────────────────────────────────────── */
+        @media (max-width: 960px) {
+            .hero { grid-template-columns: 1fr; }
+            .hero-left { padding: 10rem 2.5rem 4rem; min-height: 60vh; }
+            .hero-right { padding: 4rem 2.5rem; }
+            .hero-right::before { display: none; }
+            .hero-stats { flex-direction: row; gap: 2rem; }
+            .two-col, .js-grid { grid-template-columns: 1fr; gap: 3rem; }
+            .arch-grid { grid-template-columns: 1fr; }
+            .bs-features { grid-template-columns: repeat(2, 1fr); }
+            .bs-grid-demo { grid-template-columns: 1fr; }
+            .footer-top { grid-template-columns: 1fr; }
+            nav { padding: 1rem 1.5rem; }
+            .container { padding: 0 1.5rem; }
+            .css-concepts { grid-template-columns: 1fr; }
+        }
+ 
+        @media (max-width: 480px) {
+            .bs-features { grid-template-columns: 1fr; }
+            .hero-stats { flex-direction: column; gap: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+ 
+<!-- Custom Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+ 
+<!-- Scroll Progress -->
+<div class="progress-bar" id="progressBar"></div>
+ 
+<!-- Navigation -->
+<nav id="mainNav">
+    <a href="#home" class="nav-logo">Bibek<span>.</span></a>
+    <ul class="nav-links">
+        <li><a href="#fullstack">Full Stack</a></li>
+        <li><a href="#html">HTML</a></li>
+        <li><a href="#css">CSS</a></li>
+        <li><a href="#bootstrap">Bootstrap</a></li>
+        <li><a href="#javascript">JavaScript</a></li>
+    </ul>
+</nav>
+ 
+<!-- ===== HERO ===== -->
+<section id="home" class="hero">
+    <div class="hero-left">
+        <p class="hero-eyebrow">CET138 — Full Stack Portfolio</p>
+        <h1 class="hero-name">Building the <em>Whole</em> Web</h1>
+        <p class="hero-tagline">A curated exploration of modern web development — from markup semantics to dynamic interactivity, every layer examined.</p>
+        <a href="#fullstack" class="hero-cta">
+            <i class="fas fa-arrow-down"></i> Explore the Stack
+        </a>
+    </div>
+    <div class="hero-right">
+        <div class="hero-stats">
+            <div class="stat-item">
+                <div class="stat-num">5</div>
+                <div class="stat-label">Core Technologies</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">3</div>
+                <div class="stat-label">Architectural Layers</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">∞</div>
+                <div class="stat-label">Possibilities</div>
+            </div>
+        </div>
+        <div class="hero-stack">
+            <h4>Technologies Covered</h4>
+            <div class="stack-tags">
+                <span class="tag">HTML5</span>
+                <span class="tag">CSS3</span>
+                <span class="tag">Bootstrap 5</span>
+                <span class="tag">ES6+</span>
+                <span class="tag">DOM API</span>
+                <span class="tag">Flexbox</span>
+                <span class="tag">Grid</span>
+                <span class="tag">Async/Await</span>
+            </div>
+        </div>
+    </div>
+</section>
+ 
+<!-- ===== FULL STACK ===== -->
+<section id="fullstack">
+    <div class="container">
+        <div class="reveal">
+            <p class="section-label">01 — Architecture</p>
+            <h2 class="section-title">What is Full Stack Development?</h2>
+            <p class="section-subtitle">Full stack development encompasses every layer of a web application — from what users see and touch, to servers, databases, and the infrastructure holding it all together.</p>
+        </div>
+ 
+        <div class="arch-grid reveal">
+            <div class="arch-cell">
+                <div class="arch-num">01 / Frontend</div>
+                <div class="arch-icon">🖥️</div>
+                <h3>Client Side</h3>
+                <p>Everything visible in the browser. The frontend translates data and logic into interactive experiences users engage with daily.</p>
+                <ul>
+                    <li>HTML / CSS</li>
+                    <li>JavaScript</li>
+                    <li>React / Vue</li>
+                    <li>Bootstrap</li>
+                </ul>
+            </div>
+            <div class="arch-cell">
+                <div class="arch-num">02 / Backend</div>
+                <div class="arch-icon">⚙️</div>
+                <h3>Server Side</h3>
+                <p>The engine under the hood. Handles business logic, authentication, data processing, and communication between frontend and database.</p>
+                <ul>
+                    <li>Node.js / Express</li>
+                    <li>Python / Django</li>
+                    <li>REST APIs</li>
+                    <li>Auth & Security</li>
+                </ul>
+            </div>
+            <div class="arch-cell">
+                <div class="arch-num">03 / Data</div>
+                <div class="arch-icon">🗄️</div>
+                <h3>Database Layer</h3>
+                <p>Where information lives. Structured or unstructured, relational or document-based — data persistence is the backbone of every application.</p>
+                <ul>
+                    <li>PostgreSQL</li>
+                    <li>MongoDB</li>
+                    <li>Redis</li>
+                    <li>ORM / ODM</li>
+                </ul>
+            </div>
+        </div>
+ 
+        <div class="fullstack-insight reveal">
+            <div class="insight-icon"><i class="fas fa-lightbulb"></i></div>
+            <div>
+                <h4>The Strategic Advantage</h4>
+                <p>A full stack developer sees the entire system at once. This holistic perspective enables faster debugging, smarter architecture decisions, clearer communication across teams, and the confidence to prototype ideas without waiting for specialists at each tier. You become the bridge between design intent and technical execution.</p>
+            </div>
+        </div>
+    </div>
+</section>
+ 
+<!-- ===== HTML ===== -->
+<section id="html">
+    <div class="container">
+        <div class="reveal">
+            <p class="section-label">02 — Markup</p>
+            <h2 class="section-title">HTML — Structure & Semantics</h2>
+            <p class="section-subtitle">HTML is not just syntax — it is the semantic contract between your content and everything that reads it: browsers, screen readers, and search engines.</p>
+        </div>
+ 
+        <div class="two-col">
+            <div class="reveal">
+                <ul class="feature-list">
+                    <li>
+                        <div class="fi-icon"><i class="fas fa-sitemap"></i></div>
+                        <div class="fi-text">
+                            <strong>Semantic Elements</strong>
+                            <span>&lt;header&gt;, &lt;nav&gt;, &lt;main&gt;, &lt;article&gt;, &lt;section&gt;, &lt;footer&gt; — each tag communicates meaning, not just structure.</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="fi-icon"><i class="fas fa-play-circle"></i></div>
+                        <div class="fi-text">
+                            <strong>Native Multimedia</strong>
+                            <span>&lt;video&gt;, &lt;audio&gt;, and &lt;canvas&gt; enable rich media without plugins — a native, performant approach to interactive content.</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="fi-icon"><i class="fas fa-keyboard"></i></div>
+                        <div class="fi-text">
+                            <strong>Enhanced Forms</strong>
+                            <span>Input types like email, date, range, and tel bring built-in validation and mobile-optimised keyboards out of the box.</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="fi-icon"><i class="fas fa-universal-access"></i></div>
+                        <div class="fi-text">
+                            <strong>Accessibility by Default</strong>
+                            <span>Proper landmark roles and ARIA attributes ensure your site is navigable by all users — an ethical and legal imperative.</span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="fi-icon"><i class="fas fa-search"></i></div>
+                        <div class="fi-text">
+                            <strong>SEO Foundation</strong>
+                            <span>Search engines parse your HTML. Clean structure, meta tags, and descriptive alt text are the invisible forces driving organic traffic.</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="reveal">
+                <div class="code-panel">
+                    <div class="code-header">
+                        <div class="dot dot-r"></div>
+                        <div class="dot dot-y"></div>
+                        <div class="dot dot-g"></div>
+                        <span class="file-name">index.html</span>
+                    </div>
+                    <div class="code-body">
+                        <pre><span class="t-cmt">&lt;!-- Semantic HTML5 Structure --&gt;</span>
+<span class="t-tag">&lt;!DOCTYPE</span> <span class="t-attr">html</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;html</span> <span class="t-attr">lang</span>=<span class="t-val">"en"</span><span class="t-tag">&gt;</span>
+<span class="t-tag">&lt;head&gt;</span>
+  <span class="t-tag">&lt;meta</span> <span class="t-attr">charset</span>=<span class="t-val">"UTF-8"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;meta</span> <span class="t-attr">name</span>=<span class="t-val">"description"</span>
+        <span class="t-attr">content</span>=<span class="t-val">"Page description for SEO"</span><span class="t-tag">&gt;</span>
+  <span class="t-tag">&lt;title&gt;</span>Semantic Page<span class="t-tag">&lt;/title&gt;</span>
+<span class="t-tag">&lt;/head&gt;</span>
+<span class="t-tag">&lt;body&gt;</span>
+  <span class="t-tag">&lt;header&gt;</span>
+    <span class="t-tag">&lt;nav</span> <span class="t-attr">aria-label</span>=<span class="t-val">"Main navigation"</span><span class="t-tag">&gt;</span>
+      <span class="t-tag">&lt;a</span> <span class="t-attr">href</span>=<span class="t-val">"/"</span><span class="t-tag">&gt;</span>Home<span class="t-tag">&lt;/a&gt;</span>
+    <span class="t-tag">&lt;/nav&gt;</span>
+  <span class="t-tag">&lt;/header&gt;</span>
+  <span class="t-tag">&lt;main&gt;</span>
+    <span class="t-tag">&lt;article&gt;</span>
+      <span class="t-tag">&lt;h1&gt;</span>Article Title<span class="t-tag">&lt;/h1&gt;</span>
+      <span class="t-tag">&lt;section&gt;</span>
+        <span class="t-tag">&lt;p&gt;</span>Meaningful content here.<span class="t-tag">&lt;/p&gt;</span>
+      <span class="t-tag">&lt;/section&gt;</span>
+    <span class="t-tag">&lt;/article&gt;</span>
+  <span class="t-tag">&lt;/main&gt;</span>
+  <span class="t-tag">&lt;footer&gt;</span>
+    <span class="t-tag">&lt;p&gt;</span>&amp;copy; 2025 Bipin Paija<span class="t-tag">&lt;/p&gt;</span>
+  <span class="t-tag">&lt;/footer&gt;</span>
+<span class="t-tag">&lt;/body&gt;</span>
+<span class="t-tag">&lt;/html&gt;</span></pre>
+                    </div>
+                </div>
+ 
+                <div class="live-demo">
+                    <div class="demo-bar">
+                        <i class="fas fa-circle" style="color:#ff5f57;font-size:0.55rem;"></i>
+                        <i class="fas fa-circle" style="color:#febc2e;font-size:0.55rem;"></i>
+                        <i class="fas fa-circle" style="color:#28c840;font-size:0.55rem;"></i>
+                        &nbsp; Live Preview
+                    </div>
+                    <div class="demo-content">
+                        <header>
+                            <small>🔗 Home &nbsp;|&nbsp; About &nbsp;|&nbsp; Contact</small>
+                        </header>
+                        <h4>Main Content Region</h4>
+                        <p>Semantic structure creates clarity — for users, assistive technologies, and search crawlers alike.</p>
+                        <span class="demo-btn">Primary Action</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+ 
+<!-- ===== CSS ===== -->
+<section id="css">
+    <div class="container">
+        <div class="reveal">
+            <p class="section-label">03 — Presentation</p>
+            <h2 class="section-title">CSS — Design & Motion</h2>
+            <p class="section-subtitle">CSS transforms raw markup into polished visual experiences. Modern CSS has evolved far beyond simple colour and font rules — it now encompasses layout engines, animation systems, and design token architecture.</p>
+        </div>
+ 
+        <div class="css-concepts reveal">
+            <div class="concept-card">
+                <div class="concept-icon"><i class="fas fa-th"></i></div>
+                <h4>CSS Grid</h4>
+                <p>Two-dimensional layout. Define rows and columns simultaneously, place items precisely, and build magazine-quality compositions without JavaScript.</p>
+            </div>
+            <div class="concept-card">
+                <div class="concept-icon"><i class="fas fa-arrows-alt-h"></i></div>
+                <h4>Flexbox</h4>
+                <p>One-dimensional alignment mastery. Distribute space, control order, and align content in a row or column with clean, predictable behaviour.</p>
+            </div>
+            <div class="concept-card">
+                <div class="concept-icon"><i class="fas fa-film"></i></div>
+                <h4>Animations & Transitions</h4>
+                <p>Keyframe animations and CSS transitions bring interfaces to life. Motion communicates state, guides attention, and delights users.</p>
+            </div>
+            <div class="concept-card">
+                <div class="concept-icon"><i class="fas fa-palette"></i></div>
+                <h4>Custom Properties</h4>
+                <p>CSS variables enable design token systems — define colour palettes, spacing scales, and typography once, apply everywhere. Theming becomes trivial.</p>
+            </div>
+        </div>
+ 
+        <div class="two-col">
+            <div class="reveal">
+                <div class="code-panel">
+                    <div class="code-header">
+                        <div class="dot dot-r"></div>
+                        <div class="dot dot-y"></div>
+                        <div class="dot dot-g"></div>
+                        <span class="file-name">styles.css</span>
+                    </div>
+                    <div class="code-body">
+                        <pre><span class="t-cmt">/* Design Token System */</span>
+<span class="t-kw">:root</span> {
+  <span class="t-attr">--color-ink</span>: <span class="t-val">#0a0a0f</span>;
+  <span class="t-attr">--color-gold</span>: <span class="t-val">#c8973a</span>;
+  <span class="t-attr">--space-lg</span>: <span class="t-val">2rem</span>;
+  <span class="t-attr">--radius</span>: <span class="t-val">4px</span>;
+}
+ 
+<span class="t-cmt">/* Responsive Grid Layout */</span>
+<span class="t-tag">.card-grid</span> {
+  <span class="t-attr">display</span>: <span class="t-val">grid</span>;
+  <span class="t-attr">grid-template-columns</span>:
+    <span class="t-val">repeat(auto-fit, minmax(280px, 1fr))</span>;
+  <span class="t-attr">gap</span>: <span class="t-val">var(--space-lg)</span>;
+}
+ 
+<span class="t-cmt">/* Keyframe Animation */</span>
+<span class="t-kw">@keyframes</span> <span class="t-val">slideIn</span> {
+  <span class="t-kw">from</span> {
+    <span class="t-attr">opacity</span>: <span class="t-val">0</span>;
+    <span class="t-attr">transform</span>: <span class="t-val">translateY(20px)</span>;
+  }
+  <span class="t-kw">to</span> {
+    <span class="t-attr">opacity</span>: <span class="t-val">1</span>;
+    <span class="t-attr">transform</span>: <span class="t-val">translateY(0)</span>;
+  }
+}
+ 
+<span class="t-cmt">/* Fluid Typography */</span>
+<span class="t-tag">h1</span> {
+  <span class="t-attr">font-size</span>: <span class="t-val">clamp(2rem, 5vw, 4rem)</span>;
+}
+ 
+<span class="t-cmt">/* Mobile-First Media Query */</span>
+<span class="t-kw">@media</span> (<span class="t-attr">min-width</span>: <span class="t-val">768px</span>) {
+  <span class="t-tag">.container</span> { <span class="t-attr">padding</span>: <span class="t-val">0 4rem</span>; }
+}</pre>
+                    </div>
+                </div>
+            </div>
+            <div class="reveal">
+                <div class="css-playground">
+                    <h4>Interactive Shapes — Hover Each</h4>
+                    <div class="shape-row">
+                        <div class="shape s1"></div>
+                        <div class="shape s2"></div>
+                        <div class="shape s3"></div>
+                        <div class="shape s4"></div>
+                    </div>
+                    <div class="animate-ball"></div>
+                    <p style="margin-top:1.5rem;font-size:0.78rem;color:var(--muted);">Orbit animation — pure CSS @keyframes, no JavaScript</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+ 
+<!-- ===== BOOTSTRAP ===== -->
+<section id="bootstrap">
+    <div class="container">
+        <div class="reveal">
+            <p class="section-label">04 — Framework</p>
+            <h2 class="section-title">Bootstrap — Rapid UI</h2>
+            <p class="section-subtitle">Bootstrap transforms weeks of CSS work into hours. Its 12-column grid, component library, and utility classes enforce consistency while accelerating every phase of development.</p>
+        </div>
+ 
+        <div class="bs-features reveal">
+            <div class="bs-feat">
+                <div class="bs-feat-num">12</div>
+                <h4>Column Grid</h4>
+                <p>Responsive layout system that adapts from mobile to widescreen.</p>
+            </div>
+            <div class="bs-feat">
+                <div class="bs-feat-num">30+</div>
+                <h4>Components</h4>
+                <p>Modals, navbars, cards, alerts — production-ready out of the box.</p>
+            </div>
+            <div class="bs-feat">
+                <div class="bs-feat-num">100+</div>
+                <h4>Utilities</h4>
+                <p>Atomic spacing, colour, display, and flex utilities for rapid composition.</p>
+            </div>
+            <div class="bs-feat">
+                <div class="bs-feat-num">∞</div>
+                <h4>Customisable</h4>
+                <p>Override Sass variables or extend with your own design tokens.</p>
+            </div>
+        </div>
+ 
+        <div class="bs-demo-panel reveal">
+            <div class="bs-demo-top">
+                <div class="dot dot-r"></div>
+                <div class="dot dot-y"></div>
+                <div class="dot dot-g"></div>
+                <span>Bootstrap Components — Live Demo</span>
+            </div>
+            <div class="bs-demo-body">
+                <div class="bs-row">
+                    <button class="bs-btn bs-btn-primary">Primary</button>
+                    <button class="bs-btn bs-btn-gold">Accent</button>
+                    <button class="bs-btn bs-btn-teal">Success</button>
+                    <button class="bs-btn bs-btn-outline">Outline</button>
+                </div>
+                <div class="bs-progress">
+                    <div class="bs-bar"></div>
+                </div>
+                <div class="bs-grid-demo">
+                    <div class="bs-grid-cell">col-6 (desktop)</div>
+                    <div class="bs-grid-cell">col-3</div>
+                    <div class="bs-grid-cell">col-3</div>
+                </div>
+                <div class="bs-alert">
+                    <i class="fas fa-check-circle"></i>
+                    Bootstrap components follow accessibility standards and include keyboard navigation support.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+ 
+<!-- ===== JAVASCRIPT ===== -->
+<section id="javascript">
+    <div class="container">
+        <div class="reveal">
+            <p class="section-label">05 — Interactivity</p>
+            <h2 class="section-title">JavaScript — Logic & Life</h2>
+            <p class="section-subtitle">JavaScript is the nervous system of the web. It transforms static pages into living applications — responding to users, fetching data, and orchestrating complex state in real time.</p>
+        </div>
+ 
+        <div class="js-grid">
+            <div class="reveal">
+                <div class="js-concepts">
+                    <div class="jc-item">
+                        <span class="jc-num">01</span>
+                        <div>
+                            <h5>DOM Manipulation</h5>
+                            <p>Query, create, and modify elements in real time. Every visual change in a browser begins with JavaScript touching the Document Object Model.</p>
+                        </div>
+                    </div>
+                    <div class="jc-item">
+                        <span class="jc-num">02</span>
+                        <div>
+                            <h5>Event-Driven Architecture</h5>
+                            <p>Clicks, keypresses, scroll, resize — every user action triggers events. Listening and responding to these events is the foundation of interactivity.</p>
+                        </div>
+                    </div>
+                    <div class="jc-item">
+                        <span class="jc-num">03</span>
+                        <div>
+                            <h5>Async / Await & Promises</h5>
+                            <p>Modern JS handles asynchronous operations elegantly. Fetch data, handle errors, and update UI without blocking the main thread.</p>
+                        </div>
+                    </div>
+                    <div class="jc-item">
+                        <span class="jc-num">04</span>
+                        <div>
+                            <h5>ES6+ Modern Features</h5>
+                            <p>Arrow functions, destructuring, modules, template literals, optional chaining — the language has matured into something expressive and powerful.</p>
+                        </div>
+                    </div>
+                    <div class="jc-item">
+                        <span class="jc-num">05</span>
+                        <div>
+                            <h5>Beyond the Browser</h5>
+                            <p>Node.js takes JS to the server. React Native extends it to mobile. Electron brings it to the desktop. One language — every platform.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+ 
+            <div class="reveal">
+                <div class="js-interactive">
+                    <div class="js-int-header">
+                        <span><span class="live-badge"></span>Interactive Demos</span>
+                        <span style="font-size:0.65rem;">JavaScript ES6+</span>
+                    </div>
+                    <div class="js-int-body">
+                        <!-- Counter -->
+                        <div class="counter-widget">
+                            <div class="counter-val" id="counterValue">0</div>
+                            <div class="counter-btns">
+                                <button class="c-btn" onclick="updateCounter(-1)">− Decrement</button>
+                                <button class="c-btn" onclick="resetCounter()">Reset</button>
+                                <button class="c-btn primary" onclick="updateCounter(1)">+ Increment</button>
+                            </div>
+                        </div>
+ 
+                        <!-- Color changer -->
+                        <div class="color-swatch">
+                            <p>Click to cycle palette</p>
+                            <div id="colorBox" onclick="changeColor()">#1a6b6b</div>
+                        </div>
+ 
+                        <!-- Email validation -->
+                        <div class="email-demo">
+                            <p>Email validator</p>
+                            <div class="email-row">
+                                <input type="email" id="emailInput" placeholder="you@domain.com" oninput="validateEmail()">
+                                <button id="validateBtn" onclick="validateEmail()">Check</button>
+                            </div>
+                            <div id="emailFeedback"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+ 
+<!-- ===== FOOTER ===== -->
+<footer>
+    <div class="container">
+        <div class="footer-top">
+            <div>
+                <div class="footer-logo">Bibek<span>.</span></div>
+                <p>CET138 Full Stack Development Portfolio — exploring the complete spectrum of modern web technologies from foundation to finish.</p>
+            </div>
+            <div>
+                <p class="footer-heading">Sections</p>
+                <ul class="footer-links">
+                    <li><a href="#fullstack">Full Stack Architecture</a></li>
+                    <li><a href="#html">HTML & Semantics</a></li>
+                    <li><a href="#css">CSS & Design Systems</a></li>
+                    <li><a href="#bootstrap">Bootstrap Framework</a></li>
+                    <li><a href="#javascript">JavaScript & DOM</a></li>
+                </ul>
+            </div>
+            <div>
+                <p class="footer-heading">Technologies</p>
+                <div class="tech-icons">
+                    <div class="t-icon" title="HTML5"><i class="fab fa-html5"></i></div>
+                    <div class="t-icon" title="CSS3"><i class="fab fa-css3-alt"></i></div>
+                    <div class="t-icon" title="Bootstrap"><i class="fab fa-bootstrap"></i></div>
+                    <div class="t-icon" title="JavaScript"><i class="fab fa-js-square"></i></div>
+                    <div class="t-icon" title="Node.js"><i class="fab fa-node-js"></i></div>
+                    <div class="t-icon" title="Git"><i class="fab fa-git-alt"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2025 Bibek Gurung — CET138 Assignment</span>
+            <span>Full Stack Development Portfolio</span>
+        </div>
+    </div>
+</footer>
+ 
+<script>
+    // ── Cursor ──────────────────────────────
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => {
+        mx = e.clientX; my = e.clientY;
+        cursor.style.left = mx + 'px';
+        cursor.style.top = my + 'px';
+    });
+    (function animRing() {
+        rx += (mx - rx) * 0.12;
+        ry += (my - ry) * 0.12;
+        ring.style.left = rx + 'px';
+        ring.style.top = ry + 'px';
+        requestAnimationFrame(animRing);
+    })();
+ 
+    // ── Scroll progress ─────────────────────
+    const pb = document.getElementById('progressBar');
+    window.addEventListener('scroll', () => {
+        const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
+        pb.style.width = pct + '%';
+        document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 60);
+    });
+ 
+    // ── Reveal on scroll ────────────────────
+    const revealEls = document.querySelectorAll('.reveal');
+    const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('in-view');
+                obs.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+    revealEls.forEach(el => obs.observe(el));
+ 
+    // ── Smooth nav links ────────────────────
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', e => {
+            e.preventDefault();
+            const t = document.querySelector(a.getAttribute('href'));
+            if (t) window.scrollTo({ top: t.offsetTop - 64, behavior: 'smooth' });
+        });
+    });
+ 
+    // ── Counter ─────────────────────────────
+    let counter = 0;
+    function updateCounter(v) {
+        counter += v;
+        const el = document.getElementById('counterValue');
+        el.textContent = counter;
+        el.style.transform = 'scale(1.15)';
+        el.style.color = v > 0 ? '#c8973a' : '#c24b2a';
+        setTimeout(() => { el.style.transform = 'scale(1)'; el.style.color = '#c8973a'; }, 200);
+    }
+    function resetCounter() {
+        counter = 0;
+        const el = document.getElementById('counterValue');
+        el.textContent = '0';
+        el.style.transform = 'scale(0.85)';
+        setTimeout(() => el.style.transform = 'scale(1)', 200);
+    }
+ 
+    // ── Color changer ────────────────────────
+    const palette = [
+        { bg: '#1a6b6b', label: '#1a6b6b' },
+        { bg: '#c8973a', label: '#c8973a' },
+        { bg: '#c24b2a', label: '#c24b2a' },
+        { bg: '#4a2c6b', label: '#4a2c6b' },
+        { bg: '#2a4a6b', label: '#2a4a6b' },
+        { bg: '#6b2a4a', label: '#6b2a4a' },
+    ];
+    let ci = 0;
+    function changeColor() {
+        ci = (ci + 1) % palette.length;
+        const box = document.getElementById('colorBox');
+        box.style.background = palette[ci].bg;
+        box.textContent = palette[ci].label;
+    }
+ 
+    // ── Email validation ─────────────────────
+    function validateEmail() {
+        const inp = document.getElementById('emailInput');
+        const fb = document.getElementById('emailFeedback');
+        const v = inp.value;
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!v) { inp.className = ''; fb.innerHTML = ''; return; }
+        if (re.test(v)) {
+            inp.className = 'valid';
+            fb.innerHTML = '<span class="valid-msg">✓ Valid email address</span>';
+        } else {
+            inp.className = 'invalid';
+            fb.innerHTML = '<span class="invalid-msg">✗ Check email format</span>';
+        }
+    }
+</script>
+</body>
+</html>
